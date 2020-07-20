@@ -3,9 +3,12 @@ package com.github.willspader.urlshortenerbackend.service;
 import com.github.willspader.urlshortenerbackend.dto.URLShortenerDTO;
 import com.github.willspader.urlshortenerbackend.entity.URLShortener;
 import com.github.willspader.urlshortenerbackend.repository.URLShortenerRepository;
+import com.github.willspader.urlshortenerbackend.service.validator.URLShortenerValidator;
 import com.github.willspader.urlshortenerbackend.util.StringUtil;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
+import com.github.willspader.urlshortenerbackend.service.validator.URLShortenerValidator.*;
 
 @Service
 public class URLShortenerService {
@@ -18,14 +21,28 @@ public class URLShortenerService {
 
     public Mono<URLShortenerDTO> saveURL(Mono<URLShortenerDTO> urlShortenerDTO) {
         return urlShortenerDTO
-                .map(urlShortenerDTOMap -> {
+                .flatMap(urlShortenerDTOMap -> {
+                    ValidationResult validation = URLShortenerValidator.isValidURL().apply(urlShortenerDTOMap);
+                    if (validation != ValidationResult.SUCCESS) {
+                        throw new IllegalStateException(validation.name());
+                    }
+
                     if (urlShortenerDTOMap.getCustomURL().isEmpty()) {
                         urlShortenerDTOMap.setCustomURL(StringUtil.createRandomCode());
                     }
-                    return urlShortenerDTOMap;
+
+                    Mono<URLShortener> urlShortener = Mono.just(new URLShortener(urlShortenerDTOMap.getOriginalURL(), urlShortenerDTOMap.getCustomURL().get()));
+
+                    // TODO: REFATORAR METODO ADICIONANDO VALIDACAO SE customURL JA EXISTE
+
+                    return urlShortener;
                 })
-                .flatMap(this::toEntity)
                 .flatMap(repository::save)
+                .flatMap(this::toDTO);
+    }
+
+    public Mono<URLShortenerDTO> getByCustomURL(String shortURL) {
+        return repository.getByCustomURL(shortURL)
                 .flatMap(this::toDTO);
     }
 

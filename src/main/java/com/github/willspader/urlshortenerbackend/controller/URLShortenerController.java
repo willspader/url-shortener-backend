@@ -25,4 +25,11 @@ public class URLShortenerController {
                 .map(urlShortener -> new ResponseEntity<>(urlShortener, HttpStatus.OK));
     }
 
+    @GetMapping("{shortURL}")
+    public Mono<ResponseEntity<URLShortenerDTO>> getURL(@PathVariable("shortURL") String shortURL) {
+        return service.getByCustomURL(shortURL)
+                .map(urlShortenerDTO ->  new ResponseEntity<>(urlShortenerDTO, HttpStatus.OK))
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
 }
