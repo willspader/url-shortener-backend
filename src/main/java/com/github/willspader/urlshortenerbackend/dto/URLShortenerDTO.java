@@ -4,8 +4,10 @@ import java.util.Optional;
 
 public class URLShortenerDTO {
 
-    private final String originalURL;
+    private String originalURL;
     private String customURL;
+
+    public URLShortenerDTO(){}
 
     public URLShortenerDTO(String originalURL, String customURL) {
         this.originalURL = originalURL;

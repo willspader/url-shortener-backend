@@ -1,11 +1,13 @@
 package com.github.willspader.urlshortenerbackend.entity;
 
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("URL_SHORTENER")
 public class URLShortener {
 
     private final String originalURL;
+    @Indexed(unique = true)
     private final String customURL;
 
     public URLShortener(String originalURL, String customURL) {

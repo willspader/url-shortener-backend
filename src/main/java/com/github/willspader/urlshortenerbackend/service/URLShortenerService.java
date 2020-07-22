@@ -1,10 +1,13 @@
 package com.github.willspader.urlshortenerbackend.service;
 
+import com.github.willspader.urlshortenerbackend.domain.BusinessError;
 import com.github.willspader.urlshortenerbackend.dto.URLShortenerDTO;
 import com.github.willspader.urlshortenerbackend.entity.URLShortener;
+import com.github.willspader.urlshortenerbackend.exception.BusinessException;
 import com.github.willspader.urlshortenerbackend.repository.URLShortenerRepository;
 import com.github.willspader.urlshortenerbackend.service.validator.URLShortenerValidator;
 import com.github.willspader.urlshortenerbackend.util.StringUtil;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -20,6 +23,7 @@ public class URLShortenerService {
     }
 
     public Mono<URLShortenerDTO> saveURL(Mono<URLShortenerDTO> urlShortenerDTO) {
+        // TODO: custom bean to override default spring boot error attributes
         return urlShortenerDTO
                 .flatMap(urlShortenerDTOMap -> {
                     ValidationResult validation = URLShortenerValidator.isValidURL().apply(urlShortenerDTOMap);
@@ -31,13 +35,10 @@ public class URLShortenerService {
                         urlShortenerDTOMap.setCustomURL(StringUtil.createRandomCode());
                     }
 
-                    Mono<URLShortener> urlShortener = Mono.just(new URLShortener(urlShortenerDTOMap.getOriginalURL(), urlShortenerDTOMap.getCustomURL().get()));
-
-                    // TODO: REFATORAR METODO ADICIONANDO VALIDACAO SE customURL JA EXISTE
-
-                    return urlShortener;
+                    return Mono.just(new URLShortener(urlShortenerDTOMap.getOriginalURL(), urlShortenerDTOMap.getCustomURL().get()));
                 })
                 .flatMap(repository::save)
+                .onErrorResume(DuplicateKeyException.class, e -> Mono.error(new BusinessException(BusinessError.CUSTOM_URL_ALREADY_EXISTS)))
                 .flatMap(this::toDTO);
     }
 
