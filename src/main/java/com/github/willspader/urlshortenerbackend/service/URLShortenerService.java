@@ -23,7 +23,6 @@ public class URLShortenerService {
     }
 
     public Mono<URLShortenerDTO> saveURL(Mono<URLShortenerDTO> urlShortenerDTO) {
-        // TODO: custom bean to override default spring boot error attributes
         return urlShortenerDTO
                 .flatMap(urlShortenerDTOMap -> {
                     ValidationResult validation = URLShortenerValidator.isValidURL().apply(urlShortenerDTOMap);
