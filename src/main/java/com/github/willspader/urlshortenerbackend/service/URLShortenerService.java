@@ -7,6 +7,8 @@ import com.github.willspader.urlshortenerbackend.exception.BusinessException;
 import com.github.willspader.urlshortenerbackend.repository.URLShortenerRepository;
 import com.github.willspader.urlshortenerbackend.service.validator.URLShortenerValidator;
 import com.github.willspader.urlshortenerbackend.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -15,6 +17,8 @@ import com.github.willspader.urlshortenerbackend.service.validator.URLShortenerV
 
 @Service
 public class URLShortenerService {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(URLShortenerService.class);
     
     private final URLShortenerRepository repository;
 
@@ -24,40 +28,33 @@ public class URLShortenerService {
 
     public Mono<URLShortenerDTO> saveURL(Mono<URLShortenerDTO> urlShortenerDTO) {
         return urlShortenerDTO
-                .flatMap(urlShortenerDTOMap -> {
-                    ValidationResult validation = URLShortenerValidator.isValidURL().apply(urlShortenerDTOMap);
+                .flatMap(dto -> {
+                    ValidationResult validation = URLShortenerValidator.isValidURL().apply(dto);
                     if (validation != ValidationResult.SUCCESS) {
                         throw new IllegalStateException(validation.name());
                     }
 
-                    if (urlShortenerDTOMap.getCustomURL().isEmpty()) {
-                        urlShortenerDTOMap.setCustomURL(StringUtil.createRandomCode());
+                    if (dto.getCustomURL().isEmpty()) {
+                        dto.setCustomURL(StringUtil.createRandomCode());
                     }
 
-                    return Mono.just(new URLShortener(urlShortenerDTOMap.getOriginalURL(), urlShortenerDTOMap.getCustomURL().get()));
+                    return Mono.just(new URLShortener(dto.getOriginalURL(), dto.getCustomURL().get()));
                 })
-                .flatMap(repository::save)
-                .onErrorResume(DuplicateKeyException.class, e -> Mono.error(new BusinessException(BusinessError.CUSTOM_URL_ALREADY_EXISTS)))
-                .flatMap(this::toDTO);
+                .flatMap(entity ->
+                        repository.save(entity)
+                                .doOnNext(e -> LOGGER.debug("URLShortener entity was saved - _id: {}", e.getCustomURL()))
+                                .onErrorResume(DuplicateKeyException.class, e -> Mono.error(new BusinessException(BusinessError.CUSTOM_URL_ALREADY_EXISTS)))
+                )
+                .flatMap(entity -> Mono.just(toDTO(entity)));
     }
 
     public Mono<URLShortenerDTO> getByCustomURL(String shortURL) {
-        return repository.getByCustomURL(shortURL)
-                .flatMap(this::toDTO);
+        return repository.findById(shortURL)
+                .flatMap(entity -> Mono.just(toDTO(entity)));
     }
 
-    private Mono<URLShortener> toEntity(URLShortenerDTO urlShortenerDTO) {
-        return Mono.just(new URLShortener(
-                urlShortenerDTO.getOriginalURL(),
-                urlShortenerDTO.getCustomURL().orElse(null)
-        ));
-    }
-
-    private Mono<URLShortenerDTO> toDTO(URLShortener urlShortener) {
-        return Mono.just(new URLShortenerDTO(
-                urlShortener.getOriginalURL(),
-                urlShortener.getCustomURL()
-        ));
+    private URLShortenerDTO toDTO(URLShortener urlShortener) {
+        return new URLShortenerDTO(urlShortener.getOriginalURL(), urlShortener.getCustomURL());
     }
 
 }

@@ -19,10 +19,9 @@ public class URLShortenerController {
     }
 
     @PostMapping("save-url")
-    @ResponseStatus(HttpStatus.CREATED)
     public Mono<ResponseEntity<URLShortenerDTO>> saveURL(@RequestBody Mono<URLShortenerDTO> urlShortenerDTO) {
         return service.saveURL(urlShortenerDTO)
-                .map(urlShortener -> new ResponseEntity<>(urlShortener, HttpStatus.OK));
+                .map(urlShortener -> new ResponseEntity<>(urlShortener, HttpStatus.CREATED));
     }
 
     @GetMapping("{shortURL}")

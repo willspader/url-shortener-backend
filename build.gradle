@@ -12,9 +12,26 @@ repositories {
 	mavenCentral()
 }
 
+
+configurations.all {
+	exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	exclude group: 'ch.qos.logback',           module: "logback-classic"
+}
+
+ext{
+	log4jVersion = '1.3.8.RELEASE'
+}
+
 dependencies {
+	// Reactive MongoDB Driver
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+
+	// Project Reactor - Webflux
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// Logging
+	implementation group: "org.springframework.boot", name: "spring-boot-starter-log4j", version: log4jVersion
+
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
