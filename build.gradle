@@ -5,8 +5,10 @@ plugins {
 }
 
 group = 'com.github.willspader'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+version = '1.0.0'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
 	mavenCentral()
