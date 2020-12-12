@@ -34,6 +34,9 @@ dependencies {
 	// Logging
 	implementation group: "org.springframework.boot", name: "spring-boot-starter-log4j", version: log4jVersion
 
+	// Actuator
+	implementation "org.springframework.boot:spring-boot-starter-actuator"
+
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}

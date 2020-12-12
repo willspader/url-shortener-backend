@@ -24,9 +24,13 @@ This environment is for testing the Dockerfile.
 
 Do the following:
 
-- gradlew build
+- gradlew clean build
 - docker build --tag url-shortener-api:1.0.0 .
 - docker-compose -f docker-compose-uat.yml up
+
+#### Prd environment
+
+The production environment (k8s cluster) is still being configured.
 
 ### Usage
 
