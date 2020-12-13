@@ -24,3 +24,20 @@ spec:
           env:
             - name: PROPERTIES_FILE
               value: application-prd
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 2
+              memory: 2G
+            limits:
+              memory: 2G
