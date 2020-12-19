@@ -26,7 +26,7 @@ ext{
 
 dependencies {
 	// Reactive MongoDB Driver
-	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb-reactive', version: '2.3.4.RELEASE'
 
 	// Project Reactor - Webflux
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'

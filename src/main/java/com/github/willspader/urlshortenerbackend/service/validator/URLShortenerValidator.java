@@ -5,7 +5,8 @@ import com.github.willspader.urlshortenerbackend.dto.URLShortenerDTO;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import static com.github.willspader.urlshortenerbackend.service.validator.URLShortenerValidator.ValidationResult.*;
+import static com.github.willspader.urlshortenerbackend.service.validator.URLShortenerValidator.ValidationResult.ERROR;
+import static com.github.willspader.urlshortenerbackend.service.validator.URLShortenerValidator.ValidationResult.SUCCESS;
 
 public interface URLShortenerValidator extends Function<URLShortenerDTO, URLShortenerValidator.ValidationResult> {
 

@@ -1,7 +1,6 @@
 package com.github.willspader.urlshortenerbackend.controller;
 
 import com.github.willspader.urlshortenerbackend.dto.URLShortenerDTO;
-import com.github.willspader.urlshortenerbackend.entity.URLShortener;
 import com.github.willspader.urlshortenerbackend.service.URLShortenerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

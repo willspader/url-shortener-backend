@@ -5,6 +5,8 @@
 This application saves a URL with a random string of 8 characters. After saving the URL, a short link is provided which can be used for redirecting
 to the original URL.
 
+## Getting Started
+
 ### Docker
 
 #### Dev environment
@@ -30,9 +32,10 @@ Do the following:
 
 #### Prd environment
 
-The production environment (k8s cluster) is still being configured.
+The production environment runs on a kubernetes cluster on AWS EKS.
+The properties file and docker-secret.yml aren't being pushed w/ sensitive content to the GitHub repository until I configure a Vault Server.
 
-### Usage
+## Usage
 
 #### Save URL Endpoint
 

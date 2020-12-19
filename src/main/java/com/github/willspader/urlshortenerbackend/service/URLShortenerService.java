@@ -6,14 +6,13 @@ import com.github.willspader.urlshortenerbackend.entity.URLShortener;
 import com.github.willspader.urlshortenerbackend.exception.BusinessException;
 import com.github.willspader.urlshortenerbackend.repository.URLShortenerRepository;
 import com.github.willspader.urlshortenerbackend.service.validator.URLShortenerValidator;
+import com.github.willspader.urlshortenerbackend.service.validator.URLShortenerValidator.ValidationResult;
 import com.github.willspader.urlshortenerbackend.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import com.github.willspader.urlshortenerbackend.service.validator.URLShortenerValidator.*;
 
 @Service
 public class URLShortenerService {

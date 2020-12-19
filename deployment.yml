@@ -14,16 +14,19 @@ spec:
       labels:
         app: url-shortener-api
     spec:
+      # remove imagePullSecrets for local tests
+      imagePullSecrets:
+        - name: url-shortener-registry-key
       containers:
         - name: url-shortener-api
-          imagePullPolicy: Never
-          image: url-shortener-api:1.0.0
+          # only for local tests -> imagePullPolicy: Never
+          #imagePullPolicy: Never
+          #image: url-shortener-api:1.0.0
+          imagePullPolicy: Always
+          image: 613032669857.dkr.ecr.us-east-1.amazonaws.com/url-shortener-registry:1.0.0
           ports:
             - containerPort: 8080
               name: http
-          env:
-            - name: PROPERTIES_FILE
-              value: application-prd
           livenessProbe:
             httpGet:
               path: /actuator/health
@@ -37,7 +40,7 @@ spec:
             periodSeconds: 10
           resources:
             requests:
-              cpu: 2
+              cpu: 1
               memory: 2G
             limits:
               memory: 2G
